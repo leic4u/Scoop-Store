@@ -18,18 +18,25 @@
     ],
     "pre_install": [
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",
         ". \"$bucketsdir\\$bucket\\scripts\\utils.ps1\"",
-        "persist_file -dir @(\"$env:APPDATA\\com.proxy.pin\") @(\"$persist_dir\\APPDATA\\com.proxy.pin\")",
-        "persist_file -dir @(\"$env:USERPROFILE\\.proxypin\") @(\"$persist_dir\\USERPROFILE\\.proxypin\")",
+        "RedirectDirectory \"$env:APPDATA\\com.proxy.pin\" \"$persist_dir\\APPDATA\\com.proxy.pin\"",
+        "RedirectDirectory \"$env:USERPROFILE\\.proxypin\" \"$persist_dir\\USERPROFILE\\.proxypin\"",
         "handle_app_lnk",
-        "do_some_things"
+        "do_some_things",
+        "Remove-Module -Name AirUtils"
     ],
-    "pre_uninstall": [
-        "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
-        ". \"$bucketsdir\\$bucket\\scripts\\utils.ps1\"",
-        "stop_process",
-        "remove_files @(\"$env:APPDATA\\com.proxy.pin\",\"$env:USERPROFILE\\.proxypin\")"
-    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    $bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
+            "    Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",
+            "    RemoveJunction \"$env:APPDATA\\com.proxy.pin\"",
+            "    RemoveJunction \"$env:USERPROFILE\\.proxypin\"",
+            "    Remove-Module -Name AirUtils",
+            "}"
+        ]
+    },
     "checkver": {
         "url": "https://api.github.com/repos/wanghongenpin/network_proxy_flutter/releases?per_page=1",
         "regex": "download/V([\\d.]+)/ProxyPin-Windows\\.zip"

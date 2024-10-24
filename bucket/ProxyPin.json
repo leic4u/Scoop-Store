@@ -26,7 +26,7 @@
     ],
     "pre_uninstall": [
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
-        ". \"$bucketsdir\\$bucket\\bin\\utils.ps1\"",
+        ". \"$bucketsdir\\$bucket\\scripts\\utils.ps1\"",
         "stop_process",
         "remove_files @(\"$env:APPDATA\\com.proxy.pin\",\"$env:USERPROFILE\\.proxypin\")"
     ],

@@ -245,6 +245,10 @@ function persist_file([array]$data_list, [array]$persist_list, [switch]$dir, [sw
     function _do($_data, $_persist) {
         create_parent_dir $_data
         create_parent_dir $_persist
+        if （!(Test-Path $_persist)） {
+            #创建文件夹，保持原始大小写
+            New-Item -ItemType Directory -Path $_persist -Force
+        }
         $isLink = if (Test-Path $_data) { (Get-Item $_data).Attributes -match "ReparsePoint" }else { $true }
         if (Test-Path $_persist) {
             if (Test-Path $_data) {

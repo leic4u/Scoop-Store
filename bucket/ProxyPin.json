@@ -19,6 +19,7 @@
     "pre_install": [
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Scoop-Store) scripts/AirUtils.psm1)",
+        "echo $(Join-Path $(Find-BucketDirectory -Root -Name Scoop-Store) scripts/AirUtils.psm1)",
         ". \"$bucketsdir\\$bucket\\scripts\\utils.ps1\"",
         "RedirectDirectory \"$env:APPDATA\\com.proxy.pin\" \"$persist_dir\\APPDATA\\com.proxy.pin\"",
         "RedirectDirectory \"$env:USERPROFILE\\.proxypin\" \"$persist_dir\\USERPROFILE\\.proxypin\"",

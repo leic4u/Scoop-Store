@@ -165,7 +165,7 @@ function RemoveJunction {
     if (Test-Path $Path -PathType Container) {
         $item = Get-Item $Path -Force
         if ($item.LinkType -eq "Junction") {
-            Remove-Item $Path -Force
+            Remove-Item $Path -Recurse -Force
         }
     }
 }

@@ -9,13 +9,13 @@
   "bin": [
     [
       "zen.exe",
-      "zen",
+      "zen"
     ]
   ],
   "shortcuts": [
     [
       "zen.exe",
-      "Zen Browser",
+      "Zen Browser"
     ]
   ],
   "persist": "Profile",

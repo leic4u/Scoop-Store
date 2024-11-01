@@ -24,7 +24,6 @@
         ". \"$bucketsdir\\$bucket\\scripts\\utils.ps1\"",
         "RedirectDirectory \"$env:APPDATA\\zen\" \"$persist_dir\\Roaming\\zen\"",
         "RedirectDirectory \"$env:LOCALAPPDATA\\zen\" \"$persist_dir\\Local\\zen\"",
-        "handle_app_lnk",
         "do_some_things",
         "Remove-Module -Name AirUtils"
     ],

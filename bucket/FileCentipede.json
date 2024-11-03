@@ -1,6 +1,6 @@
 {
   "version": "2.82.0",
-  "description": "An internet file download manager",
+  "description": "An All-In-One internet file upload/download manager, BitTorrent Client, WebDAV client, FTP client, and SSH client.",
   "homepage": "https://filecxx.com/",
   "license": "Freeware",
   "notes": "If you want scoop to uninstall the service during the un-installation process, use the `-p` switch (this will also remove all persisted files)",

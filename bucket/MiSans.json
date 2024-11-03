@@ -6,7 +6,7 @@
   "license": "OFL-1.1",
   "url": "https://hyperos.mi.com/font-download/MiSans.zip",
   "hash": "8FB800D83691E152E48ED0EB255C91E15EBBDB93104BBFF02A75CAD26FBCE9CB",
-  "extract_dir": "OTF",
+  "extract_dir": "MiSans/otf",
   "installer": {
     "script": [
       "$currentBuildNumber = [int] (Get-ItemProperty \"HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\").CurrentBuildNumber",

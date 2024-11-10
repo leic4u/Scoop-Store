@@ -23,8 +23,8 @@
     "pre_install": [
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",
-        "RedirectDirectory \"$user_LocalAppData\\Quicker\" \"$persist_dir\\Local\\Quicker\"",
-        "RedirectDirectory \"$user_Documents\\Quicker\" \"$persist_dir\\Documents\\Quicker\"",
+        "RedirectDirectory \"$env:LOCALAPPDATA\\Quicker\" \"$persist_dir\\Local\\Quicker\"",
+        "RedirectDirectory \"$env:USERPROFILE\\Documents\\Quicker\" \"$persist_dir\\Documents\\Quicker\"",
         "Remove-Module -Name AirUtils"
     ],
     "pre_uninstall": [
@@ -37,8 +37,8 @@
             "if ($cmd -eq 'uninstall') {",
             "    $bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
             "    Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",
-            "    RemoveJunction \"$user_Documents\\Quicker\"",
-            "    RemoveJunction \"$user_LocalAppData\\Quicker\"",
+            "    RemoveJunction \"$env:USERPROFILE\\Documents\\Quicker\"",
+            "    RemoveJunction \"$env:LOCALAPPDATA\\Quicker\"",
             "    Remove-Module -Name AirUtils",
             "}"
         ]

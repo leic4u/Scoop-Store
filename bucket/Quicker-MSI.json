@@ -5,10 +5,10 @@
     "license": "Shareware",
     "architecture": {
         "64bit": {
-            "url": "https://getquicker.net/download/item/fast_x64#/quiker.msi",
+            "url": "https://getquicker.net/download/item/fast_x64#/quiker.msi"
         },
         "32bit": {
-            "url": "https://getquicker.net/download/item/fast_x86#/quiker.msi",
+            "url": "https://getquicker.net/download/item/fast_x86#/quiker.msi"
         }
     },
     "extract_dir": "Quicker",

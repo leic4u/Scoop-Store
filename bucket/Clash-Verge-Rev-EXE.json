@@ -20,8 +20,7 @@
         "RedirectDirectory \"$env:USERPROFILE\\.config\\clash-verge\" \"$persist_dir\\.config\\clash-verge\"",
         "Remove-Module -Name AirUtils"
     ],
-    "post_install": {
-        "script": [
+    "post_install": [
             "# 构建 install-service.exe 的完整路径",
             "$installServicePath = Join-Path $dir 'resources\\install-service.exe'",
             "# 检查 install-service.exe 是否存在",
@@ -32,8 +31,7 @@
             "    # 如果文件不存在，则输出警告",
             "    Write-Warning 'install-service.exe not found. Skipping service installation.'",
             "}"
-        ]
-    },
+    ],
     "uninstaller": {
         "script": [
             "if ($cmd -eq 'uninstall') {",

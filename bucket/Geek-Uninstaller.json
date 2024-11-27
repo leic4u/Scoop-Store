@@ -9,7 +9,6 @@
     "pre_install": [
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst*\" -Force -Recurse",
         "RedirectDirectory \"$env:APPDATA\\Geek Uninstaller\" \"$persist_dir\\Roaming\\Geek-Uninstaller\"",
         "Remove-Module -Name AirUtils"
     ],

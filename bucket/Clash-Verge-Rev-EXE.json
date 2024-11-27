@@ -37,7 +37,6 @@
             "if ($cmd -eq 'uninstall') {",
             "    $bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
             "    Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",
-            "    Stop-Process -Name \"clash-verge\"",
             "    # 构建 uninstall-service.exe 的完整路径",
             "    $uninstallServicePath = Join-Path $dir 'resources\\uninstall-service.exe'",
             "    # 检查 uninstall-service.exe 是否存在",

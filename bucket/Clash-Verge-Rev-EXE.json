@@ -18,7 +18,7 @@
         "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst*\" -Force -Recurse",
         "RedirectDirectory \"$env:APPDATA\\io.github.clash-verge-rev.clash-verge-rev\" \"$persist_dir\\Roaming\\io.github.clash-verge-rev.clash-verge-rev\"",
         "RedirectDirectory \"$env:USERPROFILE\\.config\\clash-verge\" \"$persist_dir\\.config\\clash-verge\"",
-        "Remove-Module -Name AirUtils",
+        "Remove-Module -Name AirUtils"
     ],
     "uninstaller": {
         "script": [

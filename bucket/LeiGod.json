@@ -13,6 +13,7 @@
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",
         "RedirectDirectory \"$env:APPDATA\\leigod\" \"$persist_dir\\leigod\"",
+        "RedirectDirectory \"$env:USERPROFILE\\.leigod\" \"$persist_dir\\.leigod\"",
         "Remove-Module -Name AirUtils"
     ],
     "post_install": [
@@ -26,6 +27,7 @@
             "    $bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
             "    Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",
             "    RemoveJunction \"$env:APPDATA\\leigod\"",
+            "    RemoveJunction \"$env:USERPROFILE\\.leigod\"",
             "    Remove-Module -Name AirUtils",
             "}"
         ]

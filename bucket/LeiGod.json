@@ -38,7 +38,7 @@
     ],
     "checkver": {
         "url": "https://www.leigod.com/configs.json",
-        "jsonpath": "$[windows].download_url",
+        "jsonpath": "$.windows.download_url",
         "regex": "/win/(?<tag>[\\d.]+)/LeiGodSetup\\.([\\d.]+)\\.exe"
     },
     "autoupdate": {

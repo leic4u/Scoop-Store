@@ -5,7 +5,7 @@
     "license": "Apache-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/wanghongenpin/network_proxy_flutter/releases/download/V1.1.5/ProxyPin-Windows.zip",
+            "url": "https://github.com/wanghongenpin/network_proxy_flutter/releases/download/v1.1.5/ProxyPin-Windows.zip",
             "hash": "e9bed9bc36017bb56dda4aa35832a25e129c6e5def442b27883716a5a477f472"
         }
     },
@@ -41,7 +41,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/wanghongenpin/network_proxy_flutter/releases/download/V$version/ProxyPin-Windows.zip"
+                "url": "https://github.com/wanghongenpin/network_proxy_flutter/releases/download/v$version/ProxyPin-Windows.zip"
             }
         }
     }

@@ -45,7 +45,7 @@
     },
     "uninstaller": {
         "script": [
-            "$p = \"$env:PROGRAMFILES(X86)\\LeiGod_Acc\\Uninstall.exe\"; Invoke-Expression \"& '$p' /currentuser /S\"",
+            "$p = \"$env:PROGRAMFILES (X86)\\LeiGod_Acc\\Uninstall.exe\"; Invoke-Expression \"& '$p' /currentuser /S\"",
             "if ($cmd -eq 'uninstall') {",
             "    $bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
             "    Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",

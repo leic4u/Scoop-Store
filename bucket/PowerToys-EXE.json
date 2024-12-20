@@ -35,7 +35,6 @@
         "architecture": {
             "64bit": {
                 "url": "https://github.com/microsoft/PowerToys/releases/download/$matchTag/PowerToysSetup-$version-x64.exe#/setup.exe"
-                }
             }
         }
     }

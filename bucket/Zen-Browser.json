@@ -18,15 +18,18 @@
         ]
     ],
     "pre_install": [
+        "$extractDir = \"$dir\"",
+        "if (Test-Path \"$extractDir\\core\") {",
+        "    # 将 core 文件夹中的所有文件移动到解压目录",
+        "    Move-Item -Path \"$extractDir\\core\\*\" -Destination \"$extractDir\" -Force",
+        "    # 删除 core 文件夹",
+        "    Remove-Item -Path \"$extractDir\\core\" -Recurse -Force",
+        "}",
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/AirUtils.psm1)",
         "RedirectDirectory \"$env:APPDATA\\zen\" \"$persist_dir\\Roaming\\zen\"",
         "RedirectDirectory \"$env:LOCALAPPDATA\\zen\" \"$persist_dir\\Local\\zen\"",
         "Remove-Module -Name AirUtils"
-    ],
-    "post_install": [
-        "Move-Item -Path \"$dir\\core\\*\" -Destination \"$dir\\\" -Force",
-        "Remove-Item -Path \"$dir\\core\" -Recurse -Force"
     ],
     "uninstaller": {
         "script": [

@@ -19,9 +19,8 @@
         "Stop-App"
     ],
     "checkver": {
-        "url": "https://xdown.org/Updatelog/",
-        "regex": "^([\\d\\.]+)\\s+（",
-        "replace": "${1}"
+        "url": "https://xdown.org/",
+        "regex": "windows: Latest update version number:(?<version>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)",
     },
     "autoupdate": {
         "url": "https://dl.xdown.org/windows/i386/xdown-$version.zip"

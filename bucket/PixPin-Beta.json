@@ -25,7 +25,6 @@
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
         ". \"$bucketsdir\\$bucket\\scripts\\utils.ps1\"",
         "stop_process",
-        "remove_files",
         ". \"$bucketsdir\\$bucket\\scripts\\Sdoog_Utils.ps1\"",
         "Stop-App"
     ],

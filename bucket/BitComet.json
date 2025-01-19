@@ -40,7 +40,8 @@
     },
     "checkver": {
         "url": "https://download.bitcomet.com/achive/",
-        "regex": "BitComet_([\\d.]+)\\.zip"
+        "regex": "BitComet_([\\d.]+)\\.zip",
+        "reverse": true
     },
     "autoupdate": {
         "url": "https://download.bitcomet.com/achive/BitComet_$version.zip"

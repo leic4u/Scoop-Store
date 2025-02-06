@@ -1,3 +1,4 @@
+#Forked from wordpure/scoop-air,Thanks to him. https://github.com/wordpure/scoop-air/blob/main/scripts/AirUtils.psm1
 function WriteLog {
     [CmdletBinding()]
     param (

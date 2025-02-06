@@ -1,4 +1,4 @@
-# $ErrorActionPreference='SilentlyContinue' forked from abgox/abgp_bucket. Thanks to him.
+# $ErrorActionPreference='SilentlyContinue' forked from abgox/abgp_bucket. Thanks to him. https://github.com/abgox/abgo_bucket/blob/main/bin/utils.ps1
 $lang = $PSUICulture
 if ($lang -ne 'zh-CN') { $lang = 'en-US' }
 

@@ -8,7 +8,7 @@
   "architecture": {
     "64bit": {
       "url": "https://github.com/RandomEngy/VidCoder/releases/download/v11.9/VidCoder-11.9.zip#/dl.7z",
-      "hash": "064bb97f37c19514438567ecb8f208fc919759dc46541ec3583c04442a764147"
+      "hash": "75A8F55B12F1F2B01D7653524B5F1A472A93F8CEDA06866DEFEB8C254CAF661A"
     }
   },
   "bin": "VidCoderCLI.exe",

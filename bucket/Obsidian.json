@@ -1,13 +1,13 @@
 {
-    "version": "1.8.4",
+    "version": "1.8.7",
     "description": "Powerful knowledge base that works on top of a local folder of plain text Markdown files.",
     "homepage": "https://obsidian.md",
     "license": {
         "identifier": "Proprietary",
         "url": "https://obsidian.md/eula"
     },
-    "url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.4/Obsidian-1.8.4.exe#/dl.7z",
-    "hash": "4e6ef740d13b2e6713fd83de9475aca1468c4a6c8de1781d0e0f75c5e57caa20",
+    "url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.7/Obsidian-1.8.7.exe#/dl.7z",
+    "hash": "4301f8ab93d20fb513ab0d6e53011559c89c05e551731f2fc8df320941299518",
     "shortcuts": [
         [
             "Obsidian.exe",

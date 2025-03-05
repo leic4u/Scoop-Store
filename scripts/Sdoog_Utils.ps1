@@ -284,12 +284,28 @@ function Stop-App {
         # 修改结束
     
         $allProcesses | Where-Object {
-            $_.Modules.FileName -like "$app_dir\*"
-            # 新增条件
-            $exeName = [System.IO.Path]::GetFileNameWithoutExtension($_.Modules.FileName)
-            $normalizedExeName = ($exeName -replace '[-_\s]', '').ToLower()
-            $nameMatch = $normalizedExeName -eq $normalizedTargetName
-            # 新增结束
+            $modulePathMatch = $false
+            $nameMatch = $false
+            try {
+                # 尝试通过模块路径判断
+                $moduleFile = $_.Modules.FileName
+                if ($moduleFile -like "$app_dir\*") {
+                    $modulePathMatch = $true
+                }
+                $exeName = [System.IO.Path]::GetFileNameWithoutExtension($moduleFile)
+                $normalizedExeName = ($exeName -replace '[-_\s]', '').ToLower()
+                if ($normalizedExeName -eq $normalizedTargetName) {
+                    $nameMatch = $true
+                }
+            }
+            catch {
+                # 如果无法访问 Modules 属性，则直接使用进程的 ProcessName 属性进行归一化比较
+                $normalizedProcessName = ($_.ProcessName -replace '[-_\s]', '').ToLower()
+                if ($normalizedProcessName -eq $normalizedTargetName) {
+                    $nameMatch = $true
+                }
+            }
+            return $modulePathMatch -or $nameMatch
         } | ForEach-Object {
             Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
             Wait-Process -Id $_.Id -ErrorAction SilentlyContinue -Timeout 30

@@ -1,0 +1,45 @@
+{
+    "version": "0.8.80",
+    "description": "基于ClashMeta的多平台代理客户端，简单易用，开源无广告。",
+    "homepage": "https://github.com/chen08209/FlClash",
+    "license": "GPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/chen08209/FlClash/releases/download/v0.8.80/FlClash-0.8.80-windows-amd64.zip",
+            "hash": "f395bba7a1db842628de05ea503df421bf030828e535e7b5e9e549d095248ff5"
+        }
+    },
+    "shortcuts": [
+        [
+            "FlClash.exe",
+            "FlClash"
+        ]
+    ],
+    "installer": {
+        "script": [
+            "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
+            ". \"$bucketsdir\\$bucket\\scripts\\Sdoog_Utils.ps1\"",
+            "New-PersistDirectory \"$env:APPDATA\\com.follow\" \"$persist_dir\\AppData\" -Migrate"
+        ]
+    },
+    "pre_uninstall": [
+        "while (Get-Service -Name 'FlClashHelperService' -ErrorAction SilentlyContinue) {",
+        "    Invoke-ExternalCommand 'sc.exe' -ArgumentList @('stop', 'FlClashHelperService') -RunAs -Quiet",
+        "    Invoke-ExternalCommand 'sc.exe' -ArgumentList @('delete', 'FlClashHelperService') -RunAs -Quiet",
+        "}",
+        "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
+        ". \"$bucketsdir\\$bucket\\scripts\\Sdoog_Utils.ps1\"",
+        "Stop-App",
+        "Remove-Junction \"$env:APPDATA\\com.follow\""
+    ],
+    "checkver": {
+        "github": "https://github.com/chen08209/FlClash"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/chen08209/FlClash/releases/download/v$version/FlClash-$version-windows-amd64.zip"
+            }
+        }
+    }
+}

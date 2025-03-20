@@ -9,7 +9,7 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.2.0/Clash.Verge_2.2.0_x64-setup.exe#/dl.7z",
-            "hash": "24a6262fb7a20da5b38e6862cfa5b81bc4631a3b1f335bddb1daed4d77bcd3ea"
+            "hash": "4704e1d5b4c156864213d32f10528a2369d441e78bb923eaaa3ead4475e5fc7d"
         }
     },
     "pre_install": [

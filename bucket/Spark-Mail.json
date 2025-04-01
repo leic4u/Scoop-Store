@@ -1,12 +1,12 @@
 {
-    "version": "3.22.2.102995",
+    "version": "3.22.5.103979",
     "license": "Proprietary",
     "description": "Spark is the perfect tool for businesses, allowing you to compose, delegate and manage emails directly with your colleagues",
     "homepage": "https://www.sparkmailapp.com/",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.sparkmailapp.com/Spark3/win/dist/3.22.2.102995/Spark.exe",
-            "hash": "d323fb0a550aa5490c0b78a0c53fd3d0507426494b7577b4e5f9d03b6edb2131",
+            "url": "https://downloads.sparkmailapp.com/Spark3/win/dist/3.22.5.103979/Spark.exe",
+            "hash": "1116807c7f2ad4f3fb9d0037094098a047bcb241ef176eff4c182739fbb7a715",
             "installer": {
                 "args": [
                     "/s",

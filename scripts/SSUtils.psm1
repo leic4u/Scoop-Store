@@ -221,7 +221,6 @@ function persist_file($source_path, $persist_dir) {
 }
 
 function RedirectDirectory {
-function RedirectPath {
     [CmdletBinding()]
     param (
         [string]$DataPath,

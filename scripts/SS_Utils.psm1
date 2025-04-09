@@ -1,3 +1,35 @@
+# 确保目录存在
+function EnsureDirectory {
+    param (
+        [string]$Path
+    )
+
+    if (-not (Test-Path $Path)) {
+        New-Item -ItemType Directory -Path $Path -Force | Out-Null
+    }
+}
+
+# 写日志函数
+function WriteLog {
+    param (
+        [string]$Message,
+        [string]$Level = 'Info'
+    )
+
+    $logMessage = "[{0}] {1} - {2}" -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss"), $Level, $Message
+    Write-Host $logMessage
+}
+
+# 测试目录是否为空
+function TestDirectoryEmpty {
+    param (
+        [string]$Path
+    )
+
+    $files = Get-ChildItem -Path $Path
+    return $files.Count -eq 0
+}
+
 function RedirectPath {
     [CmdletBinding()]
     param (

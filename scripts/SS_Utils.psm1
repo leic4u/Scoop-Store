@@ -183,47 +183,55 @@ function RedirectDirectory {
         }
     }
 
-    # 确保持久化路径的目录存在
+    # 确保持久化路径的父级目录存在
     $persistParentDir = Split-Path -Path $PersistPath -Parent
     EnsureDirectory $persistParentDir
 
-    # 如果是文件
-    if (-not (Test-Path $PersistPath) -and (Test-Path $DataPath -PathType Leaf)) {
-        # 如果目标文件夹为空，移动文件
-        Move-Item -Path $DataPath -Destination $PersistPath -Force
-        WriteLog "Moved file from ""$DataPath"" to ""$PersistPath""." -Level 'Info'
-    }
-    # 如果是目录
-    elseif (-not (Test-Path $PersistPath) -and (Test-Path $DataPath -PathType Container)) {
-        EnsureDirectory $PersistPath
-
-        $dataEmpty = TestDirectoryEmpty $DataPath
-        $persistEmpty = TestDirectoryEmpty $PersistPath
-
-        if (!$dataEmpty -and $persistEmpty) {
-            robocopy $DataPath $PersistPath /E /MOVE /NFL /NDL /NJH /NJS /NC /NS | Out-Null
-            WriteLog "Moved contents from ""$DataPath"" to ""$PersistPath""." -Level 'Info'
+    # 判断路径类型：文件还是目录
+    if (Test-Path $DataPath -PathType Leaf) {
+        # 如果是文件，移动文件并创建硬链接
+        if (!(Test-Path $PersistPath)) {
+            Move-Item -Path $DataPath -Destination $PersistPath -Force
+            WriteLog "Moved file from ""$DataPath"" to ""$PersistPath""." -Level 'Info'
         }
-        elseif (!$dataEmpty -and !$persistEmpty) {
-            $backupName = "{0}-backup-{1}" -f $DataPath, (Get-Date -Format "yyMMddHHmmss")
-            Rename-Item -Path $DataPath -NewName $backupName
-            WriteLog "Both paths contain data. ""$DataPath"" backed up to $backupName." -Level 'Warning'
+
+        # 删除原始路径并创建硬链接
+        if (Test-Path $DataPath) {
+            Remove-Item -Path $DataPath -Force
         }
-    }
 
-    # 删除原始路径
-    if (Test-Path $DataPath) {
-        Remove-Item $DataPath -Force -Recurse
-    }
-
-    # 创建链接
-    if (Test-Path $PersistPath -PathType Leaf) {
         New-Item -ItemType HardLink -Path $DataPath -Target $PersistPath | Out-Null
         WriteLog "Hard link created: $DataPath => $PersistPath." -Level 'Info'
     }
-    elseif (Test-Path $PersistPath -PathType Container) {
+    elseif (Test-Path $DataPath -PathType Container) {
+        # 如果是目录，移动目录并创建符号链接
+        if (!(Test-Path $PersistPath)) {
+            EnsureDirectory $PersistPath
+
+            $dataEmpty = TestDirectoryEmpty $DataPath
+            $persistEmpty = TestDirectoryEmpty $PersistPath
+
+            if (!$dataEmpty -and $persistEmpty) {
+                robocopy $DataPath $PersistPath /E /MOVE /NFL /NDL /NJH /NJS /NC /NS | Out-Null
+                WriteLog "Moved contents from ""$DataPath"" to ""$PersistPath""." -Level 'Info'
+            }
+            elseif (!$dataEmpty -and !$persistEmpty) {
+                $backupName = "{0}-backup-{1}" -f $DataPath, (Get-Date -Format "yyMMddHHmmss")
+                Rename-Item -Path $DataPath -NewName $backupName
+                WriteLog "Both paths contain data. ""$DataPath"" backed up to $backupName." -Level 'Warning'
+            }
+        }
+
+        # 删除原始路径并创建符号链接
+        if (Test-Path $DataPath) {
+            Remove-Item -Path $DataPath -Force -Recurse
+        }
+
         New-Item -ItemType Junction -Path $DataPath -Target $PersistPath | Out-Null
         WriteLog "Junction created: $DataPath => $PersistPath." -Level 'Info'
+    }
+    else {
+        WriteLog "The specified path type is not recognized: $DataPath" -Level 'Error'
     }
 }
 

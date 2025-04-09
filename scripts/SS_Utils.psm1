@@ -160,9 +160,23 @@ function EnsureJunction {
 }
 
 function persist_file($source_path, $persist_dir) {
-    # 检查源路径是否存在
+    # 检查 $source_path 是否存在
     if (!(Test-Path $source_path)) {
-        throw "Error: Source path '$source_path' does not exist."
+        Write-Host "Source path '$source_path' does not exist. Creating it..."
+
+        if ($source_path.EndsWith('\') -or (Test-Path $source_path -PathType Container)) {
+            # 如果路径是目录或以 '\' 结尾，则创建目录
+            New-Item -ItemType Directory -Path $source_path | Out-Null
+        } else {
+            # 如果路径是文件，则创建父目录并创建空文件
+            $parent_dir = Split-Path -Parent $source_path
+            if (!(Test-Path $parent_dir)) {
+                New-Item -ItemType Directory -Path $parent_dir | Out-Null
+            }
+            New-Item -ItemType File -Path $source_path | Out-Null
+        }
+
+        Write-Host "Source path '$source_path' has been created."
     }
 
     # 检查 $persist_dir 是否指定了具体文件或文件夹名称

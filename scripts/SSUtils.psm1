@@ -221,82 +221,60 @@ function persist_file($source_path, $persist_dir) {
 }
 
 function RedirectDirectory {
-    [CmdletBinding()]
+function RedirectPath {
     param (
-        [string]$DataPath,
-        [string]$PersistPath
+        [string]$DataPath,         # 目标文件
+        [string]$PersistPath       # 持久化文件位置
     )
 
-    if (Test-Path $DataPath) {
-        $item = Get-Item $DataPath -Force
-        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
-            WriteLog "`"$DataPath`" is already linked to `"$PersistPath`"." -Level 'Warning'
-            return
-        }
-    }
-
-    $isFile = Test-Path $DataPath -PathType Leaf
-    $isDirectory = Test-Path $DataPath -PathType Container
-
-    # 🧱 确保 PersistPath 的父目录存在
-    EnsureDirectory (Split-Path $PersistPath -Parent)
-
-    if (!(Test-Path $DataPath)) {
-        if ($PersistPath.EndsWith('\')) {
-            EnsureDirectory $PersistPath
-            New-Item -ItemType Junction -Path $DataPath -Target $PersistPath | Out-Null
-            WriteLog "Junction created (new): $DataPath => $PersistPath." -Level 'Info'
-        } else {
-            # ✅ 创建硬链接（无需管理员权限，适用于文件）
-            cmd /c mklink /H "$DataPath" "$PersistPath" | Out-Null
-            WriteLog "Hard link created (new): $DataPath => $PersistPath." -Level 'Info'
-        }
+    # 如果目标文件路径为空，返回
+    if (-not $DataPath) {
+        Write-Host "Invalid DataPath." -ForegroundColor Red
         return
     }
 
-    if ($isDirectory) {
-        $dataEmpty = TestDirectoryEmpty $DataPath
-        $persistEmpty = TestDirectoryEmpty $PersistPath
-
-        if (!$dataEmpty -and $persistEmpty) {
-            robocopy $DataPath $PersistPath /E /MOVE /NFL /NDL /NJH /NJS /NC /NS | Out-Null
-            WriteLog "Moved contents from directory `"$DataPath`" to `"$PersistPath`"." -Level 'Info'
-        }
-        elseif (!$dataEmpty -and !$persistEmpty) {
-            $backupName = "{0}-backup-{1}" -f $DataPath, (Get-Date -Format "yyMMddHHmmss")
-            Rename-Item -Path $DataPath -NewName $backupName
-            WriteLog "Both directories contain data. `"$DataPath`" backed up to $backupName." -Level 'Warning'
-        }
-
-        if (Test-Path $DataPath) {
-            Remove-Item $DataPath -Force -Recurse
-        }
-
-        New-Item -ItemType Junction -Path $DataPath -Target $PersistPath | Out-Null
-        WriteLog "Junction created: $DataPath => $PersistPath." -Level 'Info'
+    # 如果持久化路径为空，返回
+    if (-not $PersistPath) {
+        Write-Host "Invalid PersistPath." -ForegroundColor Red
+        return
     }
-    elseif ($isFile) {
-        if (!(Test-Path $PersistPath)) {
-            EnsureDirectory (Split-Path $PersistPath -Parent)
-            Move-Item $DataPath $PersistPath
-            WriteLog "Moved file from `"$DataPath`" to `"$PersistPath`"." -Level 'Info'
-        }
-        else {
-            $backupName = "{0}-backup-{1}{2}" -f $DataPath, (Get-Date -Format "yyMMddHHmmss"), (Split-Path $DataPath -Extension)
-            Rename-Item -Path $DataPath -NewName $backupName
-            WriteLog "File exists in both locations. Backed up `"$DataPath`" to $backupName." -Level 'Warning'
-        }
 
-        if (Test-Path $DataPath) {
-            Remove-Item $DataPath -Force
-        }
-
-        # ✅ 创建硬链接
-        cmd /c mklink /H "$DataPath" "$PersistPath" | Out-Null
-        WriteLog "Hard link created: $DataPath => $PersistPath." -Level 'Info'
+    # 检查目标文件是否已存在
+    if (Test-Path $DataPath) {
+        Write-Host "`"$DataPath`" already exists, skipping creation of hard link." -ForegroundColor Yellow
+        return
     }
-    else {
-        WriteLog "Unsupported path type: $DataPath" -Level 'Error'
+
+    # 如果目标文件不存在，创建新的硬链接
+    if (!(Test-Path $PersistPath)) {
+        Write-Host "`"$PersistPath`" does not exist. Exiting function." -ForegroundColor Red
+        return
+    }
+
+    # 使用 try-catch 来捕获重命名和路径拆分可能的错误
+    try {
+        $filename = [System.IO.Path]::GetFileName($DataPath)
+        $parentDir = Split-Path $DataPath -Parent
+
+        # 如果父目录为空，抛出异常
+        if (-not $parentDir) {
+            throw "Failed to get parent directory for $DataPath"
+        }
+
+        $backupName = "$parentDir\$filename-backup"
+        
+        # 如果文件已存在，重命名备份
+        if (Test-Path $DataPath) {
+            Rename-Item $DataPath -NewName $backupName
+            Write-Host "`"$DataPath`" backed up to `$backupName." -ForegroundColor Green
+        }
+
+        # 创建硬链接
+        New-Item -ItemType HardLink -Path $DataPath -Target $PersistPath | Out-Null
+        Write-Host "`"$DataPath`" successfully linked to `$PersistPath." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "An error occurred: $_" -ForegroundColor Red
     }
 }
 

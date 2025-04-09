@@ -159,6 +159,53 @@ function EnsureJunction {
     }
 }
 
+function persist_file($source_path, $persist_dir) {
+    # 检查源路径是否存在
+    if (!(Test-Path $source_path)) {
+        throw "Error: Source path '$source_path' does not exist."
+    }
+
+    # 检查 $persist_dir 是否指定了具体文件或文件夹名称
+    $is_specific_target = Test-Path -Path (Split-Path -Parent $persist_dir)
+
+    # 如果未指定具体文件或文件夹名称，则使用源路径名称作为目标名称
+    if (!$is_specific_target) {
+        $persist_dir = Join-Path $persist_dir (Split-Path -Leaf $source_path)
+    }
+
+    # 如果目标路径已经存在，检查类型是否冲突
+    if (Test-Path $persist_dir) {
+        if ((Get-Item $persist_dir).PSIsContainer -ne (Get-Item $source_path).PSIsContainer) {
+            throw "Error: Target path '$persist_dir' conflicts with a different type (file vs directory)."
+        }
+    } else {
+        # 如果目标路径不存在，则创建目标路径的父目录
+        $parent_dir = Split-Path -Parent $persist_dir
+        if (!(Test-Path $parent_dir)) {
+            New-Item -ItemType Directory -Path $parent_dir | Out-Null
+        }
+    }
+
+    # 检查源路径类型并创建链接
+    if ((Get-Item $source_path).PSIsContainer) {
+        # 处理目录持久化
+        if (!(Test-Path $persist_dir)) {
+            Write-Host "Creating directory junction for '$source_path' to '$persist_dir'."
+            New-DirectoryJunction $persist_dir $source_path | Out-Null
+        }
+    } else {
+        # 处理文件持久化
+        if (!(Test-Path $persist_dir)) {
+            Write-Host "Creating hard link for '$source_path' to '$persist_dir'."
+            New-HardLink -Path $persist_dir -Target $source_path | Out-Null
+        } else {
+            Write-Host "Target file '$persist_dir' already exists. Skipped."
+        }
+    }
+
+    Write-Host "Persisted '$source_path' to '$persist_dir'."
+}
+
 function RedirectDirectory {
     [CmdletBinding()]
     param (

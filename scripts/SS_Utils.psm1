@@ -155,3 +155,68 @@ function RemoveLink {
         WriteLog "Path is not a symbolic link or junction: $Path" -Level 'Warning'
     }
 }
+
+function Stop-App {
+    param(
+        [Parameter(Position = 0, ValueFromPipeline, HelpMessage = "Array of paths to search for executables")]
+        [string[]]
+        $Path
+    )
+
+    # 如果未传入 Path 参数，使用默认值
+    if (-not $Path) {
+        $Path = @($dir, (Split-Path $dir -Parent) + '\current')
+    }
+
+    # 获取所有进程到内存中，提高性能
+    $allProcesses = Get-Process
+
+    foreach ($app_dir in $Path) {
+        ### 修改部分开始：如果目标目录名为 "current"，则取其父目录名称
+        $targetName = [System.IO.Path]::GetFileName($app_dir)
+        if ($targetName -ieq "current") {
+            $targetName = [System.IO.Path]::GetFileName((Split-Path $app_dir -Parent))
+        }
+        ### 修改部分结束
+        # 移除空格、下划线、连字符（正则表达式 '[-_\s]' 表示这三种字符）
+        $normalizedTargetName = ($targetName -replace '[-_\s]', '').ToLower()
+        # 修改结束
+    
+        $allProcesses | Where-Object {
+            $modulePathMatch = $false
+            $nameMatch = $false
+            try {
+                # 尝试获取进程模块文件路径
+                $moduleFile = $_.Modules.FileName
+                # 如果模块文件位于目标路径下，则认为匹配
+                if ($moduleFile -like "$app_dir\*") {
+                    $modulePathMatch = $true
+                }
+                # 提取exe文件名称（不含扩展名），归一化处理
+                $exeName = [System.IO.Path]::GetFileNameWithoutExtension($moduleFile)
+                $normalizedExeName = ($exeName -replace '[-_\s]', '').ToLower()
+                if ($normalizedExeName -eq $normalizedTargetName) {
+                    $nameMatch = $true
+                }
+            }
+            catch {
+                # 如果访问Modules失败，则直接使用ProcessName归一化比较
+                $normalizedProcessName = ($_.ProcessName -replace '[-_\s]', '').ToLower()
+                if ($normalizedProcessName -eq $normalizedTargetName) {
+                    $nameMatch = $true
+                }
+            }
+            catch {
+                # 如果无法访问 Modules 属性，则直接使用进程的 ProcessName 属性进行归一化比较
+                $normalizedProcessName = ($_.ProcessName -replace '[-_\s]', '').ToLower()
+                if ($normalizedProcessName -eq $normalizedTargetName) {
+                    $nameMatch = $true
+                }
+            }
+            return $modulePathMatch -or $nameMatch
+        } | ForEach-Object {
+            Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
+            Wait-Process -Id $_.Id -ErrorAction SilentlyContinue -Timeout 30
+        }
+    }
+}

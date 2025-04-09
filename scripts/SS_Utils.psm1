@@ -64,6 +64,7 @@ function RedirectPath {
             WriteLog "Junction created (new): $DataPath => $PersistPath." -Level 'Info'
         } else {
             # Treat as file
+            EnsureDirectory (Split-Path $PersistPath -Parent)
             New-Item -ItemType SymbolicLink -Path $DataPath -Target $PersistPath | Out-Null
             WriteLog "Symbolic link created (new): $DataPath => $PersistPath." -Level 'Info'
         }

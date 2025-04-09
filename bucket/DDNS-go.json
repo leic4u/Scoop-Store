@@ -22,7 +22,7 @@
         "Invoke-ExternalCommand -Path \"$dir\\ddns-go.exe\" -ArgumentList @('-s', 'install') -RunAs",
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/SS_Utils.psm1)",
-        "RedirectDirectory \"$env:USERPROFILE\\.ddns_go_config.yaml\" \"$persist_dir\\USERPROFILE\\.ddns_go_config.yaml\"",
+        "persist_file \"$env:USERPROFILE\\.ddns_go_config.yaml\" \"$persist_dir\\USERPROFILE\\.ddns_go_config.yaml\"",
         "Remove-Module -Name SS_Utils"
     ],
     "pre_uninstall": [

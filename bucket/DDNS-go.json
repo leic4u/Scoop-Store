@@ -21,16 +21,16 @@
     "post_install": [
         "Invoke-ExternalCommand -Path \"$dir\\ddns-go.exe\" -ArgumentList @('-s', 'install') -RunAs",
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
-        ". $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/utils.ps1)",
-        "persist_file @(\"$env:USERPROFILE\\.ddns_go_config.yaml\") @(\"$persist_dir\\USERPROFILE\\.ddns_go_config.yaml\") -file",
-        "Remove-Module -Name utils.ps1"
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/SS_Utils.psm1)",
+        "RedirectDirectory \"$env:USERPROFILE\\.ddns_go_config.yaml\" \"$persist_dir\\USERPROFILE\\.ddns_go_config.yaml\"",
+        "Remove-Module -Name SS_Utils"
     ],
     "pre_uninstall": [
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
-        ". $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/utils.ps1)",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/SS_Utils.psm1)",
         "RemoveJunction \"$env:USERPROFILE\\.ddns_go_config.yaml\"",
         "Invoke-ExternalCommand -Path \"$dir\\ddns-go.exe\" -ArgumentList @('-s', 'uninstall') -RunAs",
-        "Remove-Module -Name utils.ps1"
+        "Remove-Module -Name SS_Utils"
     ],
     "checkver": "github",
     "autoupdate": {

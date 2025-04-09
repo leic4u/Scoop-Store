@@ -18,11 +18,6 @@
         }
     },
     "bin": "ddns-go.exe",
-    "pre_install": [
-        "if (!(Test-Path \"$env:USERPROFILE\\.ddns_go_config.yaml\")) {",
-        "    New-Item -ItemType File -Path \"$env:USERPROFILE\\.ddns_go_config.yaml\" -Force | Out-Null",
-        "}"
-    ],
     "post_install": [
         "Invoke-ExternalCommand -Path \"$dir\\ddns-go.exe\" -ArgumentList @('-s', 'install') -RunAs",
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",

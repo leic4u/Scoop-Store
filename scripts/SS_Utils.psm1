@@ -166,7 +166,7 @@ function RedirectDirectory {
         [string]$PersistPath
     )
 
-    # 检查目标路径是否存在
+    # 检查 DataPath 的类型
     if (Test-Path $DataPath) {
         $item = Get-Item $DataPath -Force
 
@@ -187,17 +187,13 @@ function RedirectDirectory {
     $persistParentDir = Split-Path -Path $PersistPath -Parent
     EnsureDirectory $persistParentDir
 
-    # 检查路径是否存在并判断类型
-    if (Test-Path $DataPath) {
-        $dataPathType = if (Test-Path -PathType Leaf $DataPath) {
-            "File"
-        } elseif (Test-Path -PathType Container $DataPath) {
-            "Directory"
-        } else {
-            "Unknown"
-        }
+    # 判断 DataPath 的类型
+    $dataPathType = if (Test-Path $DataPath -PathType Leaf) {
+        "File"
+    } elseif (Test-Path $DataPath -PathType Container) {
+        "Directory"
     } else {
-        $dataPathType = "NotExist"
+        "NotExist"
     }
 
     # 根据路径类型处理
@@ -266,6 +262,7 @@ function RedirectDirectory {
         }
     }
 }
+
 function RemoveJunction {
     [CmdletBinding()]
     param (

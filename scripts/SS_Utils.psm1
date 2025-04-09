@@ -1,33 +1,162 @@
-# 确保目录存在
-function EnsureDirectory {
-    param (
-        [string]$Path
-    )
-
-    if (-not (Test-Path $Path)) {
-        New-Item -ItemType Directory -Path $Path -Force | Out-Null
-    }
-}
-
-# 写日志函数
+#Forked from wordpure/scoop-air,Thanks to him. https://github.com/wordpure/scoop-air/blob/main/scripts/AirUtils.psm1
 function WriteLog {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory = $true)]
         [string]$Message,
+        [ValidateSet('Info', 'Success', 'Warning', 'Error')]
         [string]$Level = 'Info'
     )
 
-    $logMessage = "[{0}] {1} - {2}" -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss"), $Level, $Message
-    Write-Host $logMessage
+    $timestamp = Get-Date -Format 'HH:mm:ss'
+    $formattedMessage = "[$timestamp] $Message"
+
+    switch ($Level) {
+        'Info' {
+            Write-Information -MessageData $formattedMessage -InformationAction Continue
+        }
+        'Success' {
+            Write-Host $formattedMessage -ForegroundColor Green
+        }
+        'Warning' {
+            Write-Warning -Message $formattedMessage
+        }
+        'Error' {
+            Write-Error -Message $formattedMessage -ErrorAction Continue
+        }
+    }
 }
 
-# 测试目录是否为空
 function TestDirectoryEmpty {
+    [CmdletBinding()]
+    param ([string]$Path)
+
+    $item = Get-Item $Path -Force
+    return [string]::IsNullOrEmpty($item.GetFiles("*", [System.IO.SearchOption]::AllDirectories)) -and
+    [string]::IsNullOrEmpty($item.GetDirectories("*", [System.IO.SearchOption]::AllDirectories))
+}
+
+function EnsureFile {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromRemainingArguments = $true)]
+        [string[]]$Paths
+    )
+
+    process {
+        foreach ($path in $Paths) {
+            if (!(Test-Path -Path $path -PathType Leaf)) {
+                New-Item -ItemType File -Path $path -Force | Out-Null
+            }
+        }
+    }
+}
+
+function EnsureDirectory {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromRemainingArguments = $true)]
+        [string[]]$Paths
+    )
+
+    process {
+        foreach ($path in $Paths) {
+            if (!(Test-Path -Path $path -PathType Container)) {
+                New-Item -ItemType Directory -Path $path -Force | Out-Null
+            }
+        }
+    }
+}
+
+function EnsureSetContent {
+    [CmdletBinding()]
+    param (
+        [string]$FilePath,
+        [string]$Content,
+        [string]$Encoding = 'UTF8'
+    )
+
+    $directory = Split-Path -Path $FilePath -Parent
+    EnsureDirectory $directory
+    Set-Content -Path $FilePath -Value $Content -Encoding $Encoding -Force
+}
+
+function EnsureHardLink {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$Link,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Target
+    )
+
+    if (!(Test-Path $Target -PathType Leaf)) {
+        WriteLog "Target is not a file or does not exist: $Target" -Level 'Error'
+        return
+    }
+
+    $parentDir = Split-Path -Parent $Link
+    if (!(Test-Path $parentDir)) {
+        EnsureDirectory $parentDir
+    }
+
+    if (Test-Path $Link) {
+        Remove-Item -Path $Link -Force
+    }
+
+    $result = New-Item -ItemType HardLink -Path $Link -Target $Target -Force -ErrorAction Stop
+
+    if ($result) {
+        WriteLog "Hard link created: $Link => $Target" -Level 'Info'
+    }
+}
+
+function RemoveHardLink {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
         [string]$Path
     )
 
-    $files = Get-ChildItem -Path $Path
-    return $files.Count -eq 0
+    if (Test-Path -Path $Path -PathType Leaf) {
+        $fileInfo = Get-Item -Path $Path
+
+        if ($fileInfo.LinkType -eq "HardLink") {
+            Remove-Item -Path $Path -Force
+        }
+    }
+}
+
+function EnsureJunction {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$Link,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Target
+    )
+
+    if (!(Test-Path $Target -PathType Container)) {
+        WriteLog "Target is not a directory or does not exist: $Target" -Level 'Error'
+        return
+    }
+
+    $parentDir = Split-Path -Parent $Link
+    if (!(Test-Path $parentDir)) {
+        EnsureDirectory $parentDir
+    }
+
+    if (Test-Path $Link) {
+        Remove-Item $Link -Recurse -Force
+    }
+
+    $result = New-Item -ItemType Junction -Path $Link -Target $Target -Force -ErrorAction Stop
+
+    if ($result) {
+        WriteLog "Junction created: $Link => $Target" -Level 'Info'
+    }
 }
 
 function RedirectDirectory {

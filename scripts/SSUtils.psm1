@@ -305,7 +305,6 @@ function RedirectDirectory {
     }
 }
 
-
 function RemoveJunction {
     [CmdletBinding()]
     param (

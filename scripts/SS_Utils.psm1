@@ -83,3 +83,43 @@ function RedirectPath {
         WriteLog "Unsupported path type: $DataPath" -Level 'Error'
     }
 }
+
+function RemoveLink {
+    [CmdletBinding()]
+    param (
+        [string]$Path
+    )
+
+    if (-not (Test-Path $Path)) {
+        WriteLog "Path does not exist: $Path" -Level 'Warning'
+        return
+    }
+
+    $item = Get-Item $Path -Force
+
+    # ✅ 新增判断：如果是符号链接或 Junction，无论文件或目录都可删除
+    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+        if ($item.LinkType -eq "Junction") {
+            # ✅ Junction 是目录的链接
+            Remove-Item $Path -Recurse -Force
+            WriteLog "Removed directory junction: $Path" -Level 'Info'
+        }
+        elseif ($item.LinkType -eq "SymbolicLink") {
+            # ✅ SymbolicLink 可能是文件或目录
+            if ($item.PSIsContainer) {
+                Remove-Item $Path -Recurse -Force
+                WriteLog "Removed directory symbolic link: $Path" -Level 'Info'
+            } else {
+                Remove-Item $Path -Force
+                WriteLog "Removed file symbolic link: $Path" -Level 'Info'
+            }
+        }
+        else {
+            # ✅ 针对其他未知类型链接做个提醒（保险起见）
+            Remove-Item $Path -Force
+            WriteLog "Removed unknown type of reparse point: $Path" -Level 'Warning'
+        }
+    } else {
+        WriteLog "Path is not a symbolic link or junction: $Path" -Level 'Warning'
+    }
+}

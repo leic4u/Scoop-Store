@@ -309,30 +309,21 @@ function RedirectDirectory {
 
 function RemoveJunction {
     [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string]$Path
-    )
+    param ([string]$Path)
 
-    if (Test-Path -Path $Path) {
-        $item = Get-Item -Path $Path -Force
+    if (!(Test-Path $Path)) {
+        WriteLog "`"$Path`" does not exist. No action taken." -Level 'Warning'
+        return
+    }
 
-        # 如果是文件的硬链接
-        if ($item.PSIsContainer -eq $false -and $item.LinkType -eq "HardLink") {
-            Remove-Item -Path $Path -Force
-            WriteLog "Removed hard link: $Path." -Level 'Info'
-        }
-        # 如果是文件夹的符号链接
-        elseif ($item.PSIsContainer -eq $true -and $item.LinkType -eq "Junction") {
-            Remove-Item -Path $Path -Recurse -Force
-            WriteLog "Removed junction: $Path." -Level 'Info'
-        }
-        # 如果不是链接
-        else {
-            WriteLog """$Path"" is not a link. No action taken." -Level 'Warning'
-        }
+    $item = Get-Item $Path -Force
+
+    # ✅ 兼容文件和目录链接的判断方式
+    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+        Remove-Item $Path -Force
+        WriteLog "`"$Path`" link removed successfully." -Level 'Info'
     }
     else {
-        WriteLog """$Path"" does not exist. No action taken." -Level 'Warning'
+        WriteLog "`"$Path`" is not a symbolic link. No action taken." -Level 'Warning'
     }
 }

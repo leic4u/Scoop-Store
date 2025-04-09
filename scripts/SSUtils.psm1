@@ -314,23 +314,23 @@ function RemoveJunction {
 
     $item = Get-Item $Path -Force
 
-    # 判断符号链接（包括软链和目录链接）
+    # 判断符号链接或目录联结
     if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
         Remove-Item $Path -Force
-        Write-Host "`"$Path`" symbolic link removed successfully." -ForegroundColor Green
+        Write-Host "`"$Path`" symbolic/junction link removed successfully." -ForegroundColor Green
         return
     }
 
-    # 判断是否为硬链接（文件）
+    # 使用 fsutil 检查是否为硬链接
     try {
-        $linkCount = ([System.IO.FileInfo]$item.FullName).LinkCount
-        if ($linkCount -gt 1) {
+        $hardlinks = & fsutil hardlink list $item.FullName 2>$null
+        if ($hardlinks.Count -gt 1) {
             Remove-Item $Path -Force
-            Write-Host "`"$Path`" hard link removed (1 of $linkCount)." -ForegroundColor Green
+            Write-Host "`"$Path`" hard link removed (1 of $($hardlinks.Count))." -ForegroundColor Green
             return
         }
     } catch {
-        Write-Host "Unable to determine hard link status: $_" -ForegroundColor Yellow
+        Write-Host "Failed to check hard link status using fsutil: $_" -ForegroundColor Yellow
     }
 
     Write-Host "`"$Path`" is not a link. No action taken." -ForegroundColor Yellow

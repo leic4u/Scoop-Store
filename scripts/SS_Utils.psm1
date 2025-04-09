@@ -166,7 +166,11 @@ function RedirectDirectory {
         [string]$PersistPath
     )
 
-    # 检查 DataPath 的类型
+    # 确保 PersistPath 父目录存在
+    $persistParentDir = Split-Path -Path $PersistPath -Parent
+    EnsureDirectory $persistParentDir
+
+    # 判断 DataPath 的类型
     if (Test-Path $DataPath) {
         $item = Get-Item $DataPath -Force
 
@@ -183,11 +187,7 @@ function RedirectDirectory {
         }
     }
 
-    # 确保持久化路径的父级目录存在
-    $persistParentDir = Split-Path -Path $PersistPath -Parent
-    EnsureDirectory $persistParentDir
-
-    # 判断 DataPath 的类型
+    # 确定 DataPath 是文件还是目录
     $dataPathType = if (Test-Path $DataPath -PathType Leaf) {
         "File"
     } elseif (Test-Path $DataPath -PathType Container) {

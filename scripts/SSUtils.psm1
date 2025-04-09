@@ -303,79 +303,35 @@ function RedirectDirectory {
 function RemoveJunction {
     [CmdletBinding()]
     param (
-        [string]$DataPath,
-        [string]$PersistPath
+        [Parameter(Mandatory = $true)]
+        [string]$Path
     )
 
-    if (Test-Path $DataPath) {
-        $item = Get-Item $DataPath -Force
-        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
-            WriteLog "`"$DataPath`" is already linked to `"$PersistPath`"." -Level 'Warning'
-            return
-        }
-    }
-
-    $isFile = Test-Path $DataPath -PathType Leaf
-    $isDirectory = Test-Path $DataPath -PathType Container
-
-    # 🧱 确保 PersistPath 的父目录存在
-    EnsureDirectory (Split-Path $PersistPath -Parent)
-
-    if (!(Test-Path $DataPath)) {
-        if ($PersistPath.EndsWith('\')) {
-            EnsureDirectory $PersistPath
-            New-Item -ItemType Junction -Path $DataPath -Target $PersistPath | Out-Null
-            WriteLog "Junction created (new): $DataPath => $PersistPath." -Level 'Info'
-        } else {
-            # ✅ 创建硬链接（无需管理员权限，适用于文件）
-            cmd /c mklink /H "$DataPath" "$PersistPath" | Out-Null
-            WriteLog "Hard link created (new): $DataPath => $PersistPath." -Level 'Info'
-        }
+    if (!(Test-Path $Path)) {
+        Write-Host "`"$Path`" does not exist. No action taken." -ForegroundColor Yellow
         return
     }
 
-    if ($isDirectory) {
-        $dataEmpty = TestDirectoryEmpty $DataPath
-        $persistEmpty = TestDirectoryEmpty $PersistPath
+    $item = Get-Item $Path -Force
 
-        if (!$dataEmpty -and $persistEmpty) {
-            robocopy $DataPath $PersistPath /E /MOVE /NFL /NDL /NJH /NJS /NC /NS | Out-Null
-            WriteLog "Moved contents from directory `"$DataPath`" to `"$PersistPath`"." -Level 'Info'
-        }
-        elseif (!$dataEmpty -and !$persistEmpty) {
-            $backupName = "{0}-backup-{1}" -f $DataPath, (Get-Date -Format "yyMMddHHmmss")
-            Rename-Item -Path $DataPath -NewName $backupName
-            WriteLog "Both directories contain data. `"$DataPath`" backed up to $backupName." -Level 'Warning'
-        }
-
-        if (Test-Path $DataPath) {
-            Remove-Item $DataPath -Force -Recurse
-        }
-
-        New-Item -ItemType Junction -Path $DataPath -Target $PersistPath | Out-Null
-        WriteLog "Junction created: $DataPath => $PersistPath." -Level 'Info'
+    # 判断符号链接（包括软链和目录链接）
+    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+        Remove-Item $Path -Force
+        Write-Host "`"$Path`" symbolic link removed successfully." -ForegroundColor Green
+        return
     }
-    elseif ($isFile) {
-        if (!(Test-Path $PersistPath)) {
-            EnsureDirectory (Split-Path $PersistPath -Parent)
-            Move-Item $DataPath $PersistPath
-            WriteLog "Moved file from `"$DataPath`" to `"$PersistPath`"." -Level 'Info'
-        }
-        else {
-            $backupName = "{0}-backup-{1}{2}" -f $DataPath, (Get-Date -Format "yyMMddHHmmss"), (Split-Path $DataPath -Extension)
-            Rename-Item -Path $DataPath -NewName $backupName
-            WriteLog "File exists in both locations. Backed up `"$DataPath`" to $backupName." -Level 'Warning'
-        }
 
-        if (Test-Path $DataPath) {
-            Remove-Item $DataPath -Force
+    # 判断是否为硬链接（文件）
+    try {
+        $linkCount = ([System.IO.FileInfo]$item.FullName).LinkCount
+        if ($linkCount -gt 1) {
+            Remove-Item $Path -Force
+            Write-Host "`"$Path`" hard link removed (1 of $linkCount)." -ForegroundColor Green
+            return
         }
+    } catch {
+        Write-Host "Unable to determine hard link status: $_" -ForegroundColor Yellow
+    }
 
-        # ✅ 创建硬链接
-        cmd /c mklink /H "$DataPath" "$PersistPath" | Out-Null
-        WriteLog "Hard link created: $DataPath => $PersistPath." -Level 'Info'
-    }
-    else {
-        WriteLog "Unsupported path type: $DataPath" -Level 'Error'
-    }
+    Write-Host "`"$Path`" is not a link. No action taken." -ForegroundColor Yellow
 }

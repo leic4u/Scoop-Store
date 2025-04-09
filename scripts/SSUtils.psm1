@@ -221,7 +221,6 @@ function persist_file($source_path, $persist_dir) {
 }
 
 function RedirectDirectory {
-function RedirectPath {
     param (
         [string]$DataPath,         # 目标文件
         [string]$PersistPath       # 持久化文件位置

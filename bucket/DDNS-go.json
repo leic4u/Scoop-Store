@@ -33,8 +33,8 @@
     "pre_uninstall": [
         "$bucket=(scoop bucket list | where-Object { $_.Source -match 'Scoop-Store'})[0].Name",
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name $bucket) scripts/SSUtils.psm1)",
-        "RemoveJunction -path \"$env:USERPROFILE\\.ddns_go_config.yaml\"",
-        "Invoke-ExternalCommand \"$dir\\ddns-go.exe\" -ArgumentList @('-s', 'uninstall') -RunAs",
+        "RemoveJunction \"$env:USERPROFILE\\.ddns_go_config.yaml\"",
+        "Invoke-ExternalCommand -Path \"$dir\\ddns-go.exe\" -ArgumentList @('-s', 'uninstall') -RunAs",
         "Remove-Module -Name SSUtils"
     ],
     "checkver": "github",

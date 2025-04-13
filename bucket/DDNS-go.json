@@ -1,6 +1,6 @@
 {
     "version": "6.9.1",
-    "description": "[sdoog]简单好用的DDNS 把 .ddns_go_config.yaml 也持久化了，卸载时仅会保留在 persist 文件夹中",
+    "description": "简单好用的 DDNS，把 .ddns_go_config.yaml 也持久化了，卸载时仅会保留在 persist 文件夹中",
     "homepage": "https://github.com/jeessy2/ddns-go",
     "license": "MIT",
     "architecture": {

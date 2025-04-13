@@ -11,12 +11,12 @@
         }
     },
     "post_install": [
-        "$vsDir = \"$env:SCOOP\\apps\\VapourSynth\\current\"",
+        "$vsDir = (Get-Item $(scoop prefix vapoursynth)).FullName",
         "if (Test-Path \"$vsDir\") { Copy-Item \"$dir\\VSRepoGUI.exe\" \"$vsDir\\\" -Force }"
     ],
     "uninstaller": {
         "script": [
-            "$vsDir = \"$env:SCOOP\\apps\\VapourSynth\\current\"",
+            "$vsDir = (Get-Item $(scoop prefix vapoursynth)).FullName",
             "if (Test-Path \"$vsDir\\VSRepoGUI.exe\") { Remove-Item \"$vsDir\\VSRepoGUI.exe\" -Force }"
         ]
     },

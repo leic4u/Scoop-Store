@@ -1,10 +1,10 @@
 {
-    "version": "1.11.4b",
+    "version": "1.11.5b",
     "description": "A open-source browser based on the Firefox engine. Experience tranquility while browsing the internet with Zen! Our mission is to give you a perfect balance for speed, privacy and productivity",
     "homepage": "https://www.zen-browser.app/",
     "license": "MPL-2.0",
-    "url": "https://github.com/zen-browser/desktop/releases/download/1.11.4b/zen.installer.exe#/dl.7z",
-    "hash": "52f376723eb636e4e3f85bf7bbbc2ef0ab75178e775d6f7df15e4dbb82287760",
+    "url": "https://github.com/zen-browser/desktop/releases/download/1.11.5b/zen.installer.exe#/dl.7z",
+    "hash": "d6489410c034e7a4b4cffc37b36d935a7fc391ebe8d56113690791ceb336666b",
     "bin": [
         [
             "zen.exe",

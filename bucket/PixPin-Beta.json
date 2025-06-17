@@ -33,6 +33,6 @@
         "regex": "/change-log/([\\d.]+).html"
     },
     "autoupdate": {
-        "url": "https://download.pixpinapp.com/PixPin_$version.zip"
+        "url": "https://download.pixpinapp.com/PixPin_zh-cn_$version.zip"
     }
 }

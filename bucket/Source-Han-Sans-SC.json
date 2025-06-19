@@ -91,6 +91,6 @@
     "regex": "Version ([\\d.]+)R"
   },
   "autoupdate": {
-    "url": "https://github.com/adobe-fonts/source-han-sans/releases/latest/download/SourceHanSansSC.zip"
+    "url": "https://github.com/adobe-fonts/source-han-sans/releases/latest/download/09_SourceHanSansSC.zip"
   }
 }

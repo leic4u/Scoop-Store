@@ -29,7 +29,7 @@
         "Stop-App"
     ],
     "checkver": {
-        "url": "https://pixpin.cn/docs/change-log/([\\d.]+).html",
+        "url": "https://pixpin.cn/docs/change-log/instructions.html",
         "regex": "/change-log/([\\d.]+).html"
     },
     "autoupdate": {

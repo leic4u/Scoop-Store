@@ -1,6 +1,6 @@
 {
     "##": "Gopeed",
-    "version": "1.7.1",
+    "version": "1.8.0",
     "description": "支持所有平台的现代下载管理器。使用 Golang 和 Flutter 构建",
     "license": {
         "identifier": "GPL-3.0-only",
@@ -8,7 +8,7 @@
     },
     "homepage": "https://github.com/GopeedLab/gopeed",
     "hash": "1bf09a1fff643c5741af21f8160b2e70caad62d0584ed2b271b49bd3c2efd57f",
-    "url": "https://mirror.ghproxy.com/https://github.com/GopeedLab/gopeed/releases/download/v1.7.1/Gopeed-v1.7.1-windows-amd64-portable.zip",
+    "url": "https://mirror.ghproxy.com/https://github.com/GopeedLab/gopeed/releases/download/v1.8.0/Gopeed-v1.8.0-windows-amd64-portable.zip",
     "checkver": "github",
     "pre_install": [
         "if (-not (Test-Path \"$persist_dir\\gopeed.db\")) { New-Item \"$dir\\gopeed.db\" -ItemType file | Out-Null }",

@@ -1,5 +1,5 @@
 {
-    "version": "74",
+    "version": "75",
     "description": "A video processing framework with simplicity in mind",
     "homepage": "https://www.vapoursynth.com",
     "suggest": {
@@ -8,12 +8,12 @@
     "license": "LGPL-2.1-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/vapoursynth/vapoursynth/releases/download/R74/VapourSynth64-Portable-R74.zip",
-            "hash": "53fb6eb4d59b26aaf26ea26fecbb9fc9698eb49b64c1cd4246dfa5d32aecfe46"
+            "url": "https://github.com/vapoursynth/vapoursynth/releases/download/R75/VapourSynth64-Portable-R75.zip",
+            "hash": "ceb0bd2c29c345d3a56d2990630ee43f7b2e4cd091f80e17e41a7880e57b3d36"
         },
         "32bit": {
-            "url": "https://github.com/vapoursynth/vapoursynth/releases/download/R74/VapourSynth64-Portable-R74.zip",
-            "hash": "53fb6eb4d59b26aaf26ea26fecbb9fc9698eb49b64c1cd4246dfa5d32aecfe46"
+            "url": "https://github.com/vapoursynth/vapoursynth/releases/download/R75/VapourSynth64-Portable-R75.zip",
+            "hash": "ceb0bd2c29c345d3a56d2990630ee43f7b2e4cd091f80e17e41a7880e57b3d36"
         }
     },
     "pre_install": [
